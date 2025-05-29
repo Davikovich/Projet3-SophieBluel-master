@@ -1,13 +1,14 @@
-/*
-Faites l’appel à l’API avec fetch afin de récupérer dynamiquement les projets de l’architecte.
-Utilisez JavaScript pour ajouter à la galerie les travaux de l’architecte que vous avez récupéré.
-Supprimez du HTML les travaux qui étaient présents. Il ne doit vous rester que le contenu que vous avez ajouté dynamiquement grâce à JavaScript.
-*/
-
+// ======================
+// Déclarations globales
+// ======================
 let works = [];
 let categories = [];
 
-/** Récupération des projets via l'API */
+// ==============================
+// Fonctions d'appel à l'API
+// ==============================
+
+/** Récupère les projets depuis l'API */
 const getWorks = async () => {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -18,7 +19,7 @@ const getWorks = async () => {
   }
 };
 
-/** Récupération des catégories via l'API */
+/** Récupère les catégories depuis l'API */
 const getCategories = async () => {
   try {
     const response = await fetch("http://localhost:5678/api/categories");
@@ -29,7 +30,11 @@ const getCategories = async () => {
   }
 };
 
-/** Insertion des projets dans la galerie principale */
+// ==================================
+// Insertion des données dans le DOM
+// ==================================
+
+/** Affiche les projets dans la galerie principale */
 const insertWorksInTheDom = (worksToInsert = works) => {
   const gallery = document.querySelector(".gallery");
   gallery.innerHTML = "";
@@ -49,7 +54,7 @@ const insertWorksInTheDom = (worksToInsert = works) => {
   });
 };
 
-/** Insertion des boutons de filtre */
+/** Affiche les filtres par catégorie */
 const insertCategoriesInTheDom = () => {
   const filtersContainer = document.querySelector(".filters");
   filtersContainer.innerHTML = "";
@@ -85,17 +90,23 @@ const insertCategoriesInTheDom = () => {
   setActiveButton(allBtn);
 };
 
-// Initialisation des données
-(async () => {
-  works = await getWorks();
-  categories = await getCategories();
-  insertWorksInTheDom();
-  insertCategoriesInTheDom();
-  insertWorksInModal();
-})();
+/** Ajoute les catégories dans le <select> de la modale */
+const insertCategoriesInSelect = () => {
+  const categorySelect = document.getElementById("category");
+  categorySelect.innerHTML =
+    '<option value="">--Choisir une catégorie--</option>';
 
-// Authentification mode admin et récupération token
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+    categorySelect.appendChild(option);
+  });
+};
 
+// ===============================
+// Authentification / Mode Admin
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
   const loginLink = document.querySelector('nav ul li a[href="login.html"]');
@@ -121,16 +132,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Modale : gestion des vues
+// ===========================================
+// Modale : affichage, navigation, fermeture
+// ===========================================
 const modal = document.getElementById("mediaModal");
 const modalOverlay = document.getElementById("modalOverlay");
 const modalClose = document.getElementById("modalClose");
 const openAddViewBtn = document.getElementById("openAddView");
-const backToGalleryBtn = document.getElementById("backToGallery");
+const openModalBtn = document.getElementById("openModal");
 
 const galleryView = document.getElementById("modalGalleryView");
 const addView = document.getElementById("modalAddView");
-const openModalBtn = document.getElementById("openModal");
 
 if (openModalBtn) {
   openModalBtn.addEventListener("click", () => {
@@ -148,17 +160,16 @@ modalClose.addEventListener("click", () => {
   modal.classList.add("hidden");
 });
 
-openAddViewBtn.addEventListener("click", () => {
-  galleryView.classList.add("hidden");
-  addView.classList.remove("hidden");
-});
+if (openAddViewBtn) {
+  openAddViewBtn.addEventListener("click", () => {
+    galleryView.classList.add("hidden");
+    addView.classList.remove("hidden");
+  });
+}
 
-backToGalleryBtn.addEventListener("click", () => {
-  addView.classList.add("hidden");
-  galleryView.classList.remove("hidden");
-});
-
-// Insertion des projets dans la modale + suppression
+// ========================================
+// Affiche les projets dans la modale
+// ========================================
 const insertWorksInModal = () => {
   const modalGallery = document.querySelector(".modal-gallery");
   modalGallery.innerHTML = "";
@@ -178,20 +189,24 @@ const insertWorksInModal = () => {
     const deleteBtn = document.createElement("button");
     deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
     deleteBtn.classList.add("delete-btn");
+
     deleteBtn.addEventListener("click", async () => {
       if (!confirm("Souhaitez-vous supprimer ce projet ?")) return;
 
       try {
-        const response = await fetch(`http://localhost:5678/api/works/${work.id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:5678/api/works/${work.id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.ok) {
           figure.remove();
-          works = works.filter(w => w.id !== work.id);
+          works = works.filter((w) => w.id !== work.id);
           insertWorksInTheDom();
         } else {
           console.error("Erreur lors de la suppression du projet");
@@ -208,6 +223,175 @@ const insertWorksInModal = () => {
   });
 };
 
+// ===========================================
+// Ajout d'un projet depuis la modale
+// ===========================================
+const addPhotoForm = document.getElementById("addPhotoForm");
+const imageInput = addPhotoForm.querySelector('input[name="image"]');
+const imagePreview = document.getElementById("imagePreview");
 
+addPhotoForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
+  const token = localStorage.getItem("token");
+  const image = imageInput.files[0];
+  const title = addPhotoForm.elements["title"].value.trim();
+  const categoryId = parseInt(addPhotoForm.elements["category"].value);
 
+  if (!image || !title || isNaN(categoryId)) {
+    alert("Tous les champs doivent être remplis.");
+    return;
+  }
+
+  addPhotoForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    const image = imageInput.files[0];
+    const title = addPhotoForm.elements["title"].value.trim();
+    const categoryId = parseInt(addPhotoForm.elements["category"].value);
+
+    // Vérification des champs
+    if (!image || !title || isNaN(categoryId)) {
+      alert("Tous les champs doivent être remplis.");
+      return;
+    }
+
+    // Vérifie le type de fichier
+    const allowedTypes = ["image/jpeg", "image/png"];
+    if (!allowedTypes.includes(image.type)) {
+      alert("Seuls les fichiers JPG et PNG sont autorisés.");
+      return;
+    }
+
+    // ✅ Vérifie la taille de l'image (4 Mo max)
+    if (image.size > 4 * 1024 * 1024) {
+      alert("L'image ne doit pas dépasser 4 Mo.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("title", title);
+    formData.append("category", categoryId);
+
+    try {
+      const response = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Erreur lors de l'envoi à l'API");
+
+      alert("Projet ajouté avec succès !");
+      addPhotoForm.reset();
+      imagePreview.innerHTML = `
+        <i class="fa-regular fa-image"></i>
+        <span>+ Ajouter photo</span>
+        <p>jpg, png : 4mo max</p>
+      `;
+
+      works = await getWorks();
+      insertWorksInTheDom();
+      insertWorksInModal();
+
+      modal.classList.add("hidden");
+      galleryView.classList.remove("hidden");
+      addView.classList.add("hidden");
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'ajout du projet.");
+    }
+  });
+
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("title", title);
+  formData.append("category", categoryId);
+
+  try {
+    const response = await fetch("http://localhost:5678/api/works", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'envoi à l'API");
+    }
+
+    alert("Projet ajouté avec succès !");
+    addPhotoForm.reset();
+    imagePreview.innerHTML = `
+      <i class="fa-regular fa-image"></i>
+      <span>+ Ajouter photo</span>
+      <p>jpg, png : 4mo max</p>
+    `;
+
+    works = await getWorks();
+    insertWorksInTheDom();
+    insertWorksInModal();
+
+    modal.classList.add("hidden");
+    galleryView.classList.remove("hidden");
+    addView.classList.add("hidden");
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors de l'ajout du projet.");
+  }
+});
+
+// ============================================
+// Prévisualisation de l'image avant envoi
+// ============================================
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      imagePreview.innerHTML = "";
+
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.maxHeight = "100%";
+      img.style.objectFit = "contain";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "Supprimer";
+      removeBtn.classList.add("btn-remove");
+
+      removeBtn.addEventListener("click", () => {
+        imagePreview.innerHTML = `
+          <i class="fa-regular fa-image"></i>
+          <span>+ Ajouter photo</span>
+          <p>jpg, png : 4mo max</p>
+        `;
+        imageInput.value = "";
+      });
+
+      imagePreview.appendChild(img);
+      imagePreview.appendChild(removeBtn);
+    };
+
+    reader.readAsDataURL(file);
+  }
+});
+
+// =====================
+// Lancement du script
+// =====================
+(async () => {
+  works = await getWorks();
+  categories = await getCategories();
+  insertWorksInTheDom();
+  insertCategoriesInTheDom();
+  insertCategoriesInSelect();
+  insertWorksInModal();
+})();
