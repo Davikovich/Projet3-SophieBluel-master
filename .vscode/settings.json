@@ -1,0 +1,6 @@
+{ 
+    "liveServer.settings.ignoreFiles": [
+        "Backend/**"
+    ],
+    "liveServer.settings.port": 5502
+}

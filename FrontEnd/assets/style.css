@@ -1,0 +1,737 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/** end reset css**/
+body {
+  max-width: 1140px;
+  margin: auto;
+  font-family: "Work Sans";
+  font-size: 14px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  margin: 50px 0;
+}
+section {
+  margin: 50px 0;
+}
+
+h1 {
+  display: flex;
+  flex-direction: column;
+  font-family: "Syne";
+  font-size: 22px;
+  font-weight: 800;
+  color: #b1663c;
+}
+
+h1 > span {
+  font-family: "Work Sans";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+h2 {
+  font-family: "Syne";
+  font-weight: 700;
+  font-size: 30px;
+  color: #1d6154;
+}
+nav ul {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+}
+nav li {
+  padding: 0 10px;
+  font-size: 1.2em;
+}
+
+nav a {
+  text-decoration: none;
+  color: #000000;
+}
+
+li:hover {
+  color: #b1663c;
+}
+#introduction {
+  display: flex;
+  align-items: center;
+}
+#introduction figure {
+  flex: 1;
+}
+#introduction img {
+  display: block;
+  margin: auto;
+  width: 80%;
+}
+
+#introduction article {
+  flex: 1;
+}
+#introduction h2 {
+  margin-bottom: 1em;
+}
+
+#introduction p {
+  margin-bottom: 0.5em;
+}
+#portfolio h2 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+.gallery {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+}
+
+.gallery img {
+  width: 100%;
+}
+#contact {
+  width: 50%;
+  margin: auto;
+}
+#contact > * {
+  text-align: center;
+}
+#contact h2 {
+  margin-bottom: 20px;
+}
+#contact form {
+  text-align: left;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+#contact input {
+  height: 50px;
+  font-size: 1.2em;
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+#contact label {
+  margin: 2em 0 1em 0;
+}
+#contact textarea {
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+input[type="submit"] {
+  font-family: "Syne";
+  font-weight: 700;
+  color: white;
+  background-color: #1d6154;
+  margin: 2em auto;
+  width: 180px;
+  text-align: center;
+  border-radius: 60px;
+}
+
+footer nav ul {
+  display: flex;
+  justify-content: flex-end;
+  margin: 2em;
+}
+
+/**  FILTRES **/
+
+.filters {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  gap: 10px;
+}
+
+.filters button {
+  background-color: #ffffff;
+  color: #1d6154;
+  border: 1px solid #1d6154;
+  border-radius: 60px;
+  padding: 5px 10px;
+  font-family: "Syne";
+  font-weight: 700;
+}
+
+.filters button:hover {
+  background-color: #1d6154;
+  color: white;
+}
+
+
+/* Style spécifique à la page de connexion LOG IN **/
+
+main.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 40px 30px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  font-family: "Work Sans", sans-serif;
+}
+
+main.login-container h2 {
+  text-align: center;
+  font-family: "Syne", sans-serif;
+  font-size: 28px;
+  color: #1d6154;
+  margin-bottom: 30px;
+}
+
+#loginForm {
+  display: flex;
+  flex-direction: column;
+}
+
+#loginForm label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+#loginForm input {
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  margin-bottom: 20px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+#loginForm input:focus {
+  border-color: #1d6154;
+  outline: none;
+}
+
+#loginForm button {
+  font-family: "Syne";
+  font-weight: 700;
+  height: 45px;
+  background-color: #1d6154;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+#loginForm button:hover {
+  background-color: #144b41;
+}
+
+/** MESSAGE D'ERREUR EN CAS DE FAUSSES INFORMATIONS **/
+#error-message {
+  text-align: center;
+  color: red;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.mdp-oublier {
+  font-size: 0.9em;
+  color: #000000;
+  text-align: right;
+  display: block;
+  margin-bottom: 15px;
+  text-decoration: none;
+  margin-left: 130px;
+  margin-right: 130px;
+  margin-top: 10px;
+}
+
+.mdp-oublier:hover {
+  text-decoration: underline;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Arrière-plan semi-transparent */
+.modal-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Contenu de la modale */
+.modal-content {
+  position: relative;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 650px;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  height: 630px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.admin-only {
+  display: none;
+}
+
+body.connected .admin-only {
+  display: block;
+}
+
+.edit-button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.edit-button-container button {
+  background: none;
+  border: none;
+  color: #1d6154;
+  font-family: "Syne";
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-button-container button i {
+  font-size: 14px;
+}
+
+/* Bannière d’édition */
+
+.edition-banner {
+  background-color: black;
+  color: white;
+  display: flex; /* Ajouté */
+  justify-content: center; /* Centrage horizontal */
+  align-items: center; /* Centrage vertical */
+  height: 59px;
+  padding: 0 20px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 16px;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.hidden {
+  display: none;
+}
+
+body.has-banner {
+  padding-top: 50px; /* pour éviter que le header soit masqué par la bannière */
+}
+
+.fa-solid {
+  color: white;
+}
+
+.projets-modifs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.projets-modifs button {
+  background: none;
+  border: none;
+  color: #000000;
+  font-family: "Syne";
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+}
+
+.projets-modifs button i {
+  font-size: 14px;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #000000;
+  font-family: "Syne";
+  font-size: 16px;
+}
+
+/* Modal détails VUE 1 */
+
+#modalGalleryView h3 {
+  font-family: "Syne";
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+
+.modal-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-bottom: 50px;
+  margin-left: 75px;
+  margin-right: 80px;
+  border-bottom: solid;
+  border-color: #b3b3b3;
+}
+
+.modal-gallery figure {
+  position: relative;
+  width: 80px;
+  height: 100px;
+  margin: 10px 5px;
+  margin-bottom: 30px;
+}
+
+.modal-gallery figcaption {
+  display: none;
+}
+
+.modal-gallery figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.modal-gallery .delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 5px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-gallery .delete-btn i {
+  pointer-events: none;
+}
+
+/*  "Ajouter une photo" VUE 2 **/
+#openAddView {
+  display: block;
+  margin: 30px auto 0;
+  padding: 10px 30px;
+  font-family: "Syne";
+  font-weight: 700;
+  font-size: 14px;
+  background-color: #1d6154;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#openAddView:hover {
+  background-color: #144b41;
+}
+
+#modalAddView h3 {
+  font-family: "Syne";
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+/* Prévisualisation de l’image (vide ou chargée) */
+.image-preview {
+  background-color: #e8f1f6;
+  border-radius: 5px;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.image-preview i {
+  font-size: 60px;
+  color: #b9c5cc;
+}
+
+.image-preview span {
+  font-size: 14px;
+  color: #444;
+  display: block;
+  padding: 10px 30px;
+  font-family: "Syne";
+  font-weight: 500;
+  font-size: 14px;
+  background-color: #cbd6dc;
+  color: #306685;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.image-preview input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.image-preview img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Formulaire dynamique */
+
+form#addPhotoForm {
+  margin-bottom: 50px;
+  margin-left: 75px;
+  margin-right: 80px;
+}
+
+#addPhotoForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#addPhotoForm label {
+  font-weight: 500;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+#addPhotoForm select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 80px;
+}
+
+.category-select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(29, 97, 84, 0.5);
+}
+
+.title-input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(29, 97, 84, 0.5);
+}
+
+/* Bouton Valider */
+
+#addPhotoForm button {
+  display: block;
+  margin: 30px auto 0;
+  padding: 10px 30px;
+  font-family: "Syne";
+  font-weight: 700;
+  font-size: 14px;
+  background-color: #1d6154;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#addPhotoForm button:hover {
+  background-color: #144b41;
+}
+
+#backToGallery {
+  display: none;
+}
