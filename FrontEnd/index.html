@@ -202,7 +202,8 @@
           <form id="addPhotoForm">
             <div class="image-preview" id="imagePreview">
               <i class="fa-regular fa-image"></i>
-              <span>+ Ajouter photo</span>
+              <button id="AjouterPhoto">+ Ajouter photo</button>
+              <!-- <span>+ Ajouter photo</span> -->
               <p>jpg, png : 4mo max</p>
               <input type="file" name="image" accept=".jpg,.jpeg,.png" required />
             </div>
@@ -211,9 +212,12 @@
             <input type="text" name="title" id="title" class="title-input" required />
     
             <label for="category">Catégorie</label>
-            <select name="category" id="category" class="category-select" required></select>
-    
-            <button type="submit">Valider</button>
+            <select name="category" id="category" class="category-select" required>
+              <option value="" disabled selected>-- Choisir une catégorie --</option>
+            </select>
+    <!-- Bouton Valider désactivé par défaut  -->
+            <button type="submit" disabled>Valider</button>
+
           </form>
           <button id="backToGallery">Retour</button>
         </div>

@@ -238,74 +238,24 @@ addPhotoForm.addEventListener("submit", async (e) => {
   const title = addPhotoForm.elements["title"].value.trim();
   const categoryId = parseInt(addPhotoForm.elements["category"].value);
 
+  // Vérification des champs
   if (!image || !title || isNaN(categoryId)) {
     alert("Tous les champs doivent être remplis.");
     return;
   }
 
-  addPhotoForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Vérifie le type de fichier
+  const allowedTypes = ["image/jpeg", "image/png"];
+  if (!allowedTypes.includes(image.type)) {
+    alert("Seuls les fichiers JPG et PNG sont autorisés.");
+    return;
+  }
 
-    const token = localStorage.getItem("token");
-    const image = imageInput.files[0];
-    const title = addPhotoForm.elements["title"].value.trim();
-    const categoryId = parseInt(addPhotoForm.elements["category"].value);
-
-    // Vérification des champs
-    if (!image || !title || isNaN(categoryId)) {
-      alert("Tous les champs doivent être remplis.");
-      return;
-    }
-
-    // Vérifie le type de fichier
-    const allowedTypes = ["image/jpeg", "image/png"];
-    if (!allowedTypes.includes(image.type)) {
-      alert("Seuls les fichiers JPG et PNG sont autorisés.");
-      return;
-    }
-
-    // ✅ Vérifie la taille de l'image (4 Mo max)
-    if (image.size > 4 * 1024 * 1024) {
-      alert("L'image ne doit pas dépasser 4 Mo.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("image", image);
-    formData.append("title", title);
-    formData.append("category", categoryId);
-
-    try {
-      const response = await fetch("http://localhost:5678/api/works", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Erreur lors de l'envoi à l'API");
-
-      alert("Projet ajouté avec succès !");
-      addPhotoForm.reset();
-      imagePreview.innerHTML = `
-        <i class="fa-regular fa-image"></i>
-        <span>+ Ajouter photo</span>
-        <p>jpg, png : 4mo max</p>
-      `;
-
-      works = await getWorks();
-      insertWorksInTheDom();
-      insertWorksInModal();
-
-      modal.classList.add("hidden");
-      galleryView.classList.remove("hidden");
-      addView.classList.add("hidden");
-    } catch (err) {
-      console.error(err);
-      alert("Erreur lors de l'ajout du projet.");
-    }
-  });
+  // Vérifie la taille de l'image (4 Mo max)
+  if (image.size > 4 * 1024 * 1024) {
+    alert("L'image ne doit pas dépasser 4 Mo.");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("image", image);
@@ -323,6 +273,10 @@ addPhotoForm.addEventListener("submit", async (e) => {
 
     if (!response.ok) {
       throw new Error("Erreur lors de l'envoi à l'API");
+    } else {
+      const validateBtn = addPhotoForm.querySelector('button[type="submit"]');
+      validateBtn.disabled = true;
+      validateBtn.classList.remove("valid");
     }
 
     alert("Projet ajouté avec succès !");
@@ -383,6 +337,42 @@ imageInput.addEventListener("change", () => {
     reader.readAsDataURL(file);
   }
 });
+
+const validateBtn = addPhotoForm.querySelector('button[type="submit"]');
+
+// Fonction pour activer le bouton si tout est valide
+const updateValidateButtonState = () => {
+  const image = imageInput.files[0];
+  const title = addPhotoForm.elements["title"].value.trim();
+  const category = addPhotoForm.elements["category"].value;
+
+  const isValid = image && title !== "" && category !== "";
+
+  if (isValid) {
+    validateBtn.disabled = false;
+    validateBtn.classList.add("valid");
+  } else {
+    validateBtn.disabled = true;
+    validateBtn.classList.remove("valid");
+  }
+};
+
+// Surveille tous les champs
+addPhotoForm.elements["image"].addEventListener(
+  "change",
+  updateValidateButtonState
+);
+addPhotoForm.elements["title"].addEventListener(
+  "input",
+  updateValidateButtonState
+);
+addPhotoForm.elements["category"].addEventListener(
+  "change",
+  updateValidateButtonState
+);
+
+// Initialisation au chargement (au cas où le champ image est pré-rempli)
+updateValidateButtonState();
 
 // =====================
 // Lancement du script

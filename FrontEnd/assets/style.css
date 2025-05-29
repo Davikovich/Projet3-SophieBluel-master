@@ -720,7 +720,7 @@ form#addPhotoForm {
   font-family: "Syne";
   font-weight: 700;
   font-size: 14px;
-  background-color: #1d6154;
+  background-color: #A7A7A7;
   color: white;
   border: none;
   border-radius: 25px;
@@ -728,9 +728,17 @@ form#addPhotoForm {
   transition: background 0.3s ease;
 }
 
-#addPhotoForm button:hover {
-  background-color: #144b41;
+#addPhotoForm button:disabled {
+  background-color: #a7a7a7;
+  cursor: not-allowed;
 }
+
+#addPhotoForm button.valid {
+  background-color: #1D6154;
+  color: white;
+  cursor: pointer;
+}
+
 
 #backToGallery {
   display: none;
