@@ -3,12 +3,12 @@
 // ======================
 let works = [];
 let categories = [];
+let imageInput; // Déclaration globale pour pouvoir le redéfinir dynamiquement
 
 // ==============================
 // Fonctions d'appel à l'API
 // ==============================
 
-/** Récupère les projets depuis l'API */
 const getWorks = async () => {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -19,7 +19,6 @@ const getWorks = async () => {
   }
 };
 
-/** Récupère les catégories depuis l'API */
 const getCategories = async () => {
   try {
     const response = await fetch("http://localhost:5678/api/categories");
@@ -34,7 +33,6 @@ const getCategories = async () => {
 // Insertion des données dans le DOM
 // ==================================
 
-/** Affiche les projets dans la galerie principale */
 const insertWorksInTheDom = (worksToInsert = works) => {
   const gallery = document.querySelector(".gallery");
   gallery.innerHTML = "";
@@ -54,7 +52,6 @@ const insertWorksInTheDom = (worksToInsert = works) => {
   });
 };
 
-/** Affiche les filtres par catégorie */
 const insertCategoriesInTheDom = () => {
   const filtersContainer = document.querySelector(".filters");
   filtersContainer.innerHTML = "";
@@ -90,11 +87,9 @@ const insertCategoriesInTheDom = () => {
   setActiveButton(allBtn);
 };
 
-/** Ajoute les catégories dans le <select> de la modale */
 const insertCategoriesInSelect = () => {
   const categorySelect = document.getElementById("category");
-  categorySelect.innerHTML =
-    '<option value="">--Choisir une catégorie--</option>';
+  categorySelect.innerHTML = '<option value="">--Choisir une catégorie--</option>';
 
   categories.forEach((category) => {
     const option = document.createElement("option");
@@ -164,6 +159,7 @@ if (openAddViewBtn) {
   openAddViewBtn.addEventListener("click", () => {
     galleryView.classList.add("hidden");
     addView.classList.remove("hidden");
+    resetImagePreview();
   });
 }
 
@@ -227,8 +223,9 @@ const insertWorksInModal = () => {
 // Ajout d'un projet depuis la modale
 // ===========================================
 const addPhotoForm = document.getElementById("addPhotoForm");
-const imageInput = addPhotoForm.querySelector('input[name="image"]');
+imageInput = addPhotoForm.querySelector('input[name="image"]');
 const imagePreview = document.getElementById("imagePreview");
+const validateBtn = addPhotoForm.querySelector('button[type="submit"]');
 
 addPhotoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -238,20 +235,17 @@ addPhotoForm.addEventListener("submit", async (e) => {
   const title = addPhotoForm.elements["title"].value.trim();
   const categoryId = parseInt(addPhotoForm.elements["category"].value);
 
-  // Vérification des champs
   if (!image || !title || isNaN(categoryId)) {
     alert("Tous les champs doivent être remplis.");
     return;
   }
 
-  // Vérifie le type de fichier
   const allowedTypes = ["image/jpeg", "image/png"];
   if (!allowedTypes.includes(image.type)) {
     alert("Seuls les fichiers JPG et PNG sont autorisés.");
     return;
   }
 
-  // Vérifie la taille de l'image (4 Mo max)
   if (image.size > 4 * 1024 * 1024) {
     alert("L'image ne doit pas dépasser 4 Mo.");
     return;
@@ -273,19 +267,11 @@ addPhotoForm.addEventListener("submit", async (e) => {
 
     if (!response.ok) {
       throw new Error("Erreur lors de l'envoi à l'API");
-    } else {
-      const validateBtn = addPhotoForm.querySelector('button[type="submit"]');
-      validateBtn.disabled = true;
-      validateBtn.classList.remove("valid");
     }
 
     alert("Projet ajouté avec succès !");
     addPhotoForm.reset();
-    imagePreview.innerHTML = `
-      <i class="fa-regular fa-image"></i>
-      <span>+ Ajouter photo</span>
-      <p>jpg, png : 4mo max</p>
-    `;
+    resetImagePreview();
 
     works = await getWorks();
     insertWorksInTheDom();
@@ -301,9 +287,10 @@ addPhotoForm.addEventListener("submit", async (e) => {
 });
 
 // ============================================
-// Prévisualisation de l'image avant envoi
+// Gestion de la prévisualisation et réinitialisation
 // ============================================
-imageInput.addEventListener("change", () => {
+
+const handleImagePreviewChange = () => {
   const file = imageInput.files[0];
 
   if (file) {
@@ -322,12 +309,8 @@ imageInput.addEventListener("change", () => {
       removeBtn.classList.add("btn-remove");
 
       removeBtn.addEventListener("click", () => {
-        imagePreview.innerHTML = `
-          <i class="fa-regular fa-image"></i>
-          <span>+ Ajouter photo</span>
-          <p>jpg, png : 4mo max</p>
-        `;
-        imageInput.value = "";
+        resetImagePreview();
+        updateValidateButtonState();
       });
 
       imagePreview.appendChild(img);
@@ -336,11 +319,27 @@ imageInput.addEventListener("change", () => {
 
     reader.readAsDataURL(file);
   }
-});
+};
 
-const validateBtn = addPhotoForm.querySelector('button[type="submit"]');
+const resetImagePreview = () => {
+  imagePreview.innerHTML = `
+    <i class="fa-regular fa-image"></i>
+    <span>+ Ajouter photo</span>
+    <p>jpg, png : 4mo max</p>
+    <input type="file" name="image" accept=".jpg,.jpeg,.png" required />
+  `;
 
-// Fonction pour activer le bouton si tout est valide
+  imageInput = imagePreview.querySelector('input[name="image"]');
+  imageInput.addEventListener("change", () => {
+    handleImagePreviewChange();
+    updateValidateButtonState();
+  });
+};
+
+// =====================================
+// Activation du bouton de validation
+// =====================================
+
 const updateValidateButtonState = () => {
   const image = imageInput.files[0];
   const title = addPhotoForm.elements["title"].value.trim();
@@ -357,24 +356,11 @@ const updateValidateButtonState = () => {
   }
 };
 
+addPhotoForm.elements["title"].addEventListener("input", updateValidateButtonState);
+addPhotoForm.elements["category"].addEventListener("change", updateValidateButtonState);
 
-
-// Surveille tous les champs
-addPhotoForm.elements["image"].addEventListener(
-  "change",
-  updateValidateButtonState
-);
-addPhotoForm.elements["title"].addEventListener(
-  "input",
-  updateValidateButtonState
-);
-addPhotoForm.elements["category"].addEventListener(
-  "change",
-  updateValidateButtonState
-);
-
-// Initialisation au chargement (au cas où le champ image est pré-rempli)
-updateValidateButtonState();
+// Initialisation
+resetImagePreview();
 
 // =====================
 // Lancement du script
