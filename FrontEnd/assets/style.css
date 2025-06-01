@@ -662,12 +662,11 @@ body.has-banner {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  position: absolute;
-  top: 0;
-  left: 0;
+  margin-top: 76px;
 }
 
 /* Formulaire dynamique */
+
 
 form#addPhotoForm {
   margin-bottom: 50px;

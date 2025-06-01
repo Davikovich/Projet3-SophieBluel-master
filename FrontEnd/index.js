@@ -357,6 +357,8 @@ const updateValidateButtonState = () => {
   }
 };
 
+
+
 // Surveille tous les champs
 addPhotoForm.elements["image"].addEventListener(
   "change",
