@@ -1,20 +1,18 @@
 // ======================
 // Déclarations globales
 // ======================
-let works = [];             // Stocke la liste des projets
-let categories = [];        // Stocke la liste des catégories
-let imageInput;             // Input de type "file" pour l’image
-let validateBtn;            // Bouton de validation du formulaire
-let addPhotoForm;           // Formulaire d’ajout de projet
-let imagePreview;           // Zone d’aperçu de l’image
+let works = [];             // Liste des projets
+let categories = [];        // Liste des catégories
+let imageInput;             // Input image
+let validateBtn;            // Bouton valider
+let addPhotoForm;           // Formulaire d'ajout
+let imagePreview;           // Zone d'aperçu
 
 // ======================
 // Fonctions utilitaires
 // ======================
 
-/**
- * Récupère les projets depuis l'API
- */
+// Appel API pour récupérer les projets
 const getWorks = async () => {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -25,9 +23,7 @@ const getWorks = async () => {
   }
 };
 
-/**
- * Récupère les catégories depuis l'API
- */
+// Appel API pour récupérer les catégories
 const getCategories = async () => {
   try {
     const response = await fetch("http://localhost:5678/api/categories");
@@ -38,9 +34,7 @@ const getCategories = async () => {
   }
 };
 
-/**
- * Affiche les projets dans la galerie principale
- */
+// Injecte les projets dans la galerie principale
 const insertWorksInTheDom = (worksToInsert = works) => {
   const gallery = document.querySelector(".gallery");
   gallery.innerHTML = "";
@@ -60,9 +54,7 @@ const insertWorksInTheDom = (worksToInsert = works) => {
   });
 };
 
-/**
- * Crée les boutons de filtre de catégories
- */
+// Crée les filtres dynamiques
 const insertCategoriesInTheDom = () => {
   const filtersContainer = document.querySelector(".filters");
   filtersContainer.innerHTML = "";
@@ -96,9 +88,7 @@ const insertCategoriesInTheDom = () => {
   setActiveButton(allBtn);
 };
 
-/**
- * Remplit le <select> de catégories dans la modale
- */
+// Insère les catégories dans le <select> de la modale
 const insertCategoriesInSelect = () => {
   const categorySelect = document.getElementById("category");
   categorySelect.innerHTML = '<option value="">--Choisir une catégorie--</option>';
@@ -111,9 +101,7 @@ const insertCategoriesInSelect = () => {
   });
 };
 
-/**
- * Affiche les projets dans la modale
- */
+// Affiche les projets dans la modale d’administration
 const insertWorksInModal = () => {
   const modalGallery = document.querySelector(".modal-gallery");
   modalGallery.innerHTML = "";
@@ -135,7 +123,7 @@ const insertWorksInModal = () => {
     deleteBtn.classList.add("delete-btn");
 
     deleteBtn.addEventListener("click", async () => {
-      if (!confirm("Souhaitez-vous supprimer ce projet ?")) return;
+      if (!confirm("Supprimer ce projet ?")) return;
 
       try {
         const response = await fetch(`http://localhost:5678/api/works/${work.id}`, {
@@ -149,11 +137,9 @@ const insertWorksInModal = () => {
           figure.remove();
           works = works.filter((w) => w.id !== work.id);
           insertWorksInTheDom();
-        } else {
-          console.error("Erreur lors de la suppression du projet");
         }
       } catch (error) {
-        console.error("Erreur API :", error);
+        console.error("Erreur suppression :", error);
       }
     });
 
@@ -164,28 +150,38 @@ const insertWorksInModal = () => {
   });
 };
 
-/**
- * Gère l’état du bouton de validation du formulaire
- */
-const updateValidateButtonState = () => {
-  const image = imageInput.files[0];
-  const title = addPhotoForm.elements["title"].value.trim();
-  const category = addPhotoForm.elements["category"].value;
+// Réinitialise la zone d’ajout d’image
+const resetImagePreview = () => {
+  imagePreview.textContent = "";
 
-  const isValid = image && title !== "" && category !== "";
+  const icon = document.createElement("i");
+  icon.className = "fa-regular fa-image";
 
-  if (isValid) {
-    validateBtn.disabled = false;
-    validateBtn.classList.add("valid");
-  } else {
-    validateBtn.disabled = true;
-    validateBtn.classList.remove("valid");
-  }
+  const span = document.createElement("span");
+  span.textContent = "+ Ajouter photo";
+
+  const note = document.createElement("p");
+  note.textContent = "jpg, png : 4mo max";
+
+  const input = document.createElement("input");
+  input.type = "file";
+  input.name = "image";
+  input.accept = ".jpg,.jpeg,.png";
+  input.required = true;
+
+  imagePreview.appendChild(icon);
+  imagePreview.appendChild(span);
+  imagePreview.appendChild(note);
+  imagePreview.appendChild(input);
+
+  imageInput = input;
+  imageInput.addEventListener("change", () => {
+    handleImagePreviewChange();
+    updateValidateButtonState();
+  });
 };
 
-/**
- * Gère la prévisualisation de l’image sélectionnée
- */
+// Affiche l’aperçu de l’image sélectionnée
 const handleImagePreviewChange = () => {
   const file = imageInput.files[0];
 
@@ -193,7 +189,7 @@ const handleImagePreviewChange = () => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      imagePreview.innerHTML = "";
+      imagePreview.textContent = "";
 
       const img = document.createElement("img");
       img.src = e.target.result;
@@ -217,27 +213,19 @@ const handleImagePreviewChange = () => {
   }
 };
 
-/**
- * Réinitialise la zone de prévisualisation (remet le + Ajouter photo)
- */
-const resetImagePreview = () => {
-  imagePreview.innerHTML = `
-    <i class="fa-regular fa-image"></i>
-    <span>+ Ajouter photo</span>
-    <p>jpg, png : 4mo max</p>
-    <input type="file" name="image" accept=".jpg,.jpeg,.png" required />
-  `;
+// Active ou désactive le bouton "Valider"
+const updateValidateButtonState = () => {
+  const image = imageInput.files[0];
+  const title = addPhotoForm.elements["title"].value.trim();
+  const category = addPhotoForm.elements["category"].value;
 
-  imageInput = imagePreview.querySelector('input[name="image"]');
-  imageInput.addEventListener("change", () => {
-    handleImagePreviewChange();
-    updateValidateButtonState();
-  });
+  const isValid = image && title && category;
+
+  validateBtn.disabled = !isValid;
+  validateBtn.classList.toggle("valid", isValid);
 };
 
-/**
- * Active tous les événements liés à la modale (ouverture, navigation)
- */
+// Gère les interactions de la modale
 const setupModalNavigation = () => {
   const modal = document.getElementById("mediaModal");
   const modalOverlay = document.getElementById("modalOverlay");
@@ -273,9 +261,7 @@ const setupModalNavigation = () => {
   }
 };
 
-/**
- * Initialise le formulaire d’ajout de projet
- */
+// Configure le formulaire d’ajout de photo
 const setupAddPhotoForm = () => {
   addPhotoForm = document.getElementById("addPhotoForm");
   imagePreview = document.getElementById("imagePreview");
@@ -291,18 +277,7 @@ const setupAddPhotoForm = () => {
     const categoryId = parseInt(addPhotoForm.elements["category"].value);
 
     if (!image || !title || isNaN(categoryId)) {
-      alert("Tous les champs doivent être remplis.");
-      return;
-    }
-
-    const allowedTypes = ["image/jpeg", "image/png"];
-    if (!allowedTypes.includes(image.type)) {
-      alert("Seuls les fichiers JPG et PNG sont autorisés.");
-      return;
-    }
-
-    if (image.size > 4 * 1024 * 1024) {
-      alert("L'image ne doit pas dépasser 4 Mo.");
+      alert("Veuillez remplir tous les champs.");
       return;
     }
 
@@ -320,17 +295,16 @@ const setupAddPhotoForm = () => {
         body: formData,
       });
 
-      if (!response.ok) throw new Error("Erreur lors de l'envoi à l'API");
+      if (!response.ok) throw new Error("Erreur API");
 
-      alert("Projet ajouté avec succès !");
+      alert("Projet ajouté !");
       addPhotoForm.reset();
-      resetImagePreview();
+      setupAddPhotoForm(); // Réinitialisation complète
+      document.getElementById("mediaModal").classList.add("hidden");
 
       works = await getWorks();
       insertWorksInTheDom();
       insertWorksInModal();
-
-      document.getElementById("mediaModal").classList.add("hidden");
     } catch (err) {
       console.error(err);
       alert("Erreur lors de l'ajout du projet.");
@@ -339,19 +313,17 @@ const setupAddPhotoForm = () => {
 
   addPhotoForm.elements["title"].addEventListener("input", updateValidateButtonState);
   addPhotoForm.elements["category"].addEventListener("change", updateValidateButtonState);
+
   resetImagePreview();
 };
 
-/**
- * Active l’affichage de la bannière "mode édition" si utilisateur connecté
- */
+// Affiche la bannière "mode édition" si utilisateur connecté
 const setupAuthBanner = () => {
   const token = localStorage.getItem("token");
   const loginLink = document.querySelector('nav ul li a[href="login.html"]');
 
   if (token) {
     document.body.classList.add("connected");
-
     const banner = document.getElementById("edition-banner");
     if (banner) {
       banner.classList.remove("hidden");
